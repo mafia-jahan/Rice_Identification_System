@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rice Variety Classifier</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark">🌾</span>
+      <span>Rice Variety Classifier</span>
+    </div>
+    <nav>
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="#upload" class="nav-cta">Classify an image</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <section class="hero">
+      <h1>Identify rice grain varieties from a photo</h1>
+      <p>
+        Upload a single grain image and a MobileNetV2 transfer-learning model
+        predicts which of the supported varieties it belongs to, with a
+        confidence score for every class.
+      </p>
+      <a class="btn btn-primary" href="#upload">Start classifying</a>
+    </section>
+
+    <section class="panel" id="upload">
+      <h1>Upload a rice grain image</h1>
+      <p class="muted">Accepted formats: JPG, JPEG, PNG, BMP, WEBP. Maximum size: 10&nbsp;MB.</p>
+
+      <form class="upload-form" action="{{ url_for('detect') }}" method="post" enctype="multipart/form-data">
+        <label for="image" class="dropzone" id="dropzone">
+          <input type="file" id="image" name="image" accept="image/*" required hidden />
+          <span class="dropzone-icon">📷</span>
+          <span class="dropzone-text" id="dropzone-text">Click to choose an image, or drag &amp; drop it here</span>
+        </label>
+
+        <div class="preview" id="preview" hidden>
+          <img id="preview-img" alt="Selected image preview" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Classify</button>
+      </form>
+
+      <p class="muted small">
+        Supported varieties:
+        {% for c in classes %}<span class="chip chip-sm">{{ c }}</span>{% endfor %}
+      </p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Supported varieties</h2>
+        <ul class="chips">
+          {% for c in classes %}
+            <li class="chip">{{ c }}</li>
+          {% endfor %}
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li>Upload a JPG or PNG image of a rice grain.</li>
+          <li>The server normalizes it to JPG, resizes it and runs the CNN.</li>
+          <li>You get the predicted variety and top probabilities.</li>
+        </ol>
+      </article>
+
+      <article class="card">
+        <h2>Model</h2>
+        <p>
+          Architecture: MobileNetV2 (ImageNet weights) with a fine-tuned
+          classification head and on-the-fly data augmentation.<br />
+          Served by Flask; the model is loaded once at server start.
+        </p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Rice Variety Classifier &middot; Flask + TensorFlow</span>
+  </footer>
+
+  <script>
+    const input = document.getElementById('image');
+    const dropzone = document.getElementById('dropzone');
+    const text = document.getElementById('dropzone-text');
+    const preview = document.getElementById('preview');
+    const previewImg = document.getElementById('preview-img');
+
+    function showFile(file) {
+      if (!file) return;
+      text.textContent = file.name;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        preview.hidden = false;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    input.addEventListener('change', () => showFile(input.files[0]));
+
+    ['dragenter', 'dragover'].forEach((ev) =>
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      })
+    );
+    ['dragleave', 'drop'].forEach((ev) =>
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+      })
+    );
+    dropzone.addEventListener('drop', (e) => {
+      if (e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        showFile(e.dataTransfer.files[0]);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+======================================================================
+RICE VARIETY CLASSIFIER - EVALUATION REPORT
+======================================================================
+Generated        : 2026-10-16 00:01:11
+Training time    : 1151.0 s (19.2 min)
+
+-- Dataset ------------------------------------------------------------
+Classes          : 5 (Arborio, Basmati, Ipsala, Jasmine, Karacadag)
+Train images     : 15000
+Validation images: 3000
+
+-- Configuration ------------------------------------------------------
+image_size       : 160
+batch_size       : 32
+epochs_head      : 4
+fine_tune        : True
+fine_tune_epochs : 2
+learning_rate    : 0.001
+seed             : 42
+
+-- Overall metrics ----------------------------------------------------
+Validation loss  : 0.1110
+Validation acc   : 0.9660 (96.60%)
+
+-- Per-epoch history --------------------------------------------------
+epoch      loss       acc   val_loss   val_acc         lr
+    1    0.1779    0.9497     0.3536    0.8637   1.00e-03
+    2    0.0623    0.9807     0.2897    0.8927   1.00e-03
+    3    0.0522    0.9836     0.2732    0.8977   1.00e-03
+    4    0.0464    0.9851     0.2773    0.9027   1.00e-03
+    5    0.0653    0.9773     0.1110    0.9660   5.00e-05
+    6    0.0487    0.9834     0.1709    0.9500   5.00e-05
+
+-- Classification report (validation set) -----------------------------
+              precision    recall  f1-score   support
+
+     Arborio     0.9593    0.9817    0.9703       600
+     Basmati     1.0000    0.8917    0.9427       600
+      Ipsala     0.9917    1.0000    0.9959       600
+     Jasmine     0.9024    0.9867    0.9427       600
+   Karacadag     0.9864    0.9700    0.9782       600
+
+    accuracy                         0.9660      3000
+   macro avg     0.9680    0.9660    0.9660      3000
+weighted avg     0.9680    0.9660    0.9660      3000
+
+-- Confusion matrix (rows = true, cols = predicted) -------------------
+                   Arborio     Basmati      Ipsala     Jasmine   Karacadag
+Arborio                589           0           2           1           8
+Basmati                  0         535           2          63           0
+Ipsala                   0           0         600           0           0
+Jasmine                  7           0           1         592           0
+Karacadag               18           0           0           0         582
+
+======================================================================
+End of report
+======================================================================

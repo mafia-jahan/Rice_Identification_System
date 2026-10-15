@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Result &middot; Rice Variety Classifier</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark">🌾</span>
+      <span>Rice Variety Classifier</span>
+    </div>
+    <nav>
+      <a href="{{ url_for('index') }}">Home</a>
+      <a href="{{ url_for('index') }}#upload" class="nav-cta">Classify another</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="panel result-panel">
+      <h1>Prediction result</h1>
+
+      <div class="result-grid">
+        <div class="result-image">
+          <img src="{{ result.image_url }}" alt="Uploaded rice grain" />
+          <p class="muted small">{{ result.filename }}</p>
+        </div>
+
+        <div class="result-details">
+          <p class="muted small">Predicted variety</p>
+          <p class="prediction">{{ result.variety }}</p>
+          <p class="confidence">Confidence: <strong>{{ result.confidence }}%</strong></p>
+
+          <h2>All probabilities</h2>
+          <ul class="prob-list">
+            {% for item in result.top_k %}
+              <li>
+                <span class="prob-label">{{ item.variety }}</span>
+                <span class="prob-bar">
+                  <span class="prob-fill" style="width: {{ item.confidence }}%"></span>
+                </span>
+                <span class="prob-value">{{ item.confidence }}%</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <p class="muted small">Classified at {{ result.created_at }}</p>
+          <a class="btn btn-primary" href="{{ url_for('index') }}#upload">Classify another image</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Rice Variety Classifier &middot; Flask + TensorFlow</span>
+  </footer>
+</body>
+</html>
